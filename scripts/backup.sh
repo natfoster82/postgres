@@ -36,17 +36,18 @@ fi
 TIMESTAMP=$(date +%F_%T | tr ':' '-')
 TEMP_FILE=$(mktemp tmp.XXXXXXXXXX)
 S3_FILE="s3://${S3_BUCKET}/${POSTGRES_DB}/${POSTGRES_DB}-backup-$TIMESTAMP"
+S3_FILE_LATEST="s3://${S3_BUCKET}/${POSTGRES_DB}/latest"
 
-#psql postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost/${POSTGRES_DB} -c 'SELECT pg_xlog_replay_pause();'
-#PGPASSWORD=${POSTGRES_PASSWORD} pg_dump -Fc --no-acl -h localhost -U ${POSTGRES_USER} ${POSTGRES_DB} > $TEMP_FILE
-#psql postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB} -c 'SELECT pg_xlog_replay_resume();'
-
-echo 'test file' > $TEMP_FILE
+psql postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost/${POSTGRES_DB} -c 'SELECT pg_xlog_replay_pause();'
+PGPASSWORD=${POSTGRES_PASSWORD} pg_dump -Fc --no-acl -h localhost -U ${POSTGRES_USER} ${POSTGRES_DB} > $TEMP_FILE
+psql postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB} -c 'SELECT pg_xlog_replay_resume();'
 
 if [ "x${S3_PASSPHRASE}" = "x" ]; then
-  s3cmd put $TEMP_FILE $S3_FILE -v
+  s3cmd put $TEMP_FILE $S3_FILE
+  s3cmd put $TEMP_FILE $S3_FILE_LATEST
 else
-  s3cmd put $TEMP_FILE $S3_FILE --encrypt -v
+  s3cmd put $TEMP_FILE $S3_FILE --encrypt
+  s3cmd put $TEMP_FILE $S3_FILE_LATEST --encrypt
 fi
 
 s3cmd put $TEMP_FILE $S3_FILE --encrypt
