@@ -51,11 +51,11 @@ echo "gpg_passphrase=${S3_PASSPHRASE}" >> "$S3CMD_CONFIG"
 echo "Finished s3cmd operations"
 
 
-if [ "x${RESTORE_FROM}" != "x" ] && [ "x$REPLICATE_FROM" == "x" ]; then
+#if [ "x${RESTORE_FROM}" != "x" ] && [ "x$REPLICATE_FROM" == "x" ]; then
 
-echo "Restoring from ${RESTORE_FROM}"
-s3cmd get s3://${S3_BUCKET}/${POSTGRES_DB}/${RESTORE_FROM} --force
-pg_restore -d postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost/${POSTGRES_DB} < ${RESTORE_FROM}
-rm "${RESTORE_FROM}"
+#echo "Restoring from ${RESTORE_FROM}"
+#s3cmd get s3://${S3_BUCKET}/${POSTGRES_DB}/${RESTORE_FROM} --force
+#pg_restore -d postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost/${POSTGRES_DB} < ${RESTORE_FROM}
+#rm "${RESTORE_FROM}"
 
-fi
+#fi
