@@ -1,7 +1,7 @@
 FROM postgres:9.6
 
 RUN apt-get update
-RUN apt-get install s3cmd ca-certificates -y
+RUN apt-get install s3cmd ca-certificates nano -y
 
 ENV PG_MAX_WAL_SENDERS 8
 ENV PG_WAL_KEEP_SEGMENTS 8
